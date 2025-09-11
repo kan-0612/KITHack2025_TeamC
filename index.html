@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Gohan App</title>
+<style>
+  body { font-family: sans-serif; }
+  #chat { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; margin-bottom: 10px;}
+  .btn { margin: 5px; padding: 5px 10px; cursor: pointer; border: 1px solid #333; border-radius: 5px; }
+</style>
+</head>
+<body>
+
+<div id="chat"></div>
+<div id="buttons"></div>
+
+<script>
+const chat = document.getElementById('chat');
+const buttonsDiv = document.getElementById('buttons');
+
+let step = 0;
+let answers = {};
+
+const questions = [
+  { key: 'budget', question: "ご予算はいくらですか？", options: ["500円以下", "501〜1000円", "1001円以上"] },
+  { key: 'place', question: "場所はどちらですか？", options: ["学内", "学外"] },
+  { key: 'people', question: "人数は？", options: ["1人", "2人", "3人以上"] },
+  { key: 'genre', question: "ジャンルは？", options: ["和食", "洋食", "中華"] },
+  { key: 'takeout', question: "テイクアウトは希望しますか？", options: ["Yes", "No"] }
+];
+
+function showNextQuestion(){
+  buttonsDiv.innerHTML = "";
+  if(step >= questions.length){
+    chat.innerHTML += `<div>アプリ: 条件が揃いました！おすすめのお店を探します…</div>`;
+    
+    // GASに問い合わせ
+    google.script.run.withSuccessHandler(displayShops).getShops(answers);
+    return;
+  }
+  
+  const q = questions[step];
+  chat.innerHTML += `<div>アプリ: ${q.question}</div>`;
+  
+  q.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'btn';
+    btn.textContent = opt;
+    btn.onclick = () => selectOption(q.key, opt);
+    buttonsDiv.appendChild(btn);
+  });
+}
+
+function selectOption(key, value){
+  answers[key] = value;
+  chat.innerHTML += `<div>あなた: ${value}</div>`;
+  step++;
+  showNextQuestion();
+}
+
+function displayShops(shops){
+  if(shops.length === 0){
+    chat.innerHTML += `<div>アプリ: 条件に合うお店は見つかりませんでした😢</div>`;
+  } else {
+    shops.forEach(shop => {
+      chat.innerHTML += `<div>アプリ: おすすめは「${shop.name}」です！🍜</div>`;
+    });
+  }
+}
+
+// 初期質問表示
+showNextQuestion();
+</script>
+
+</body>
+</html>
