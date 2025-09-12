@@ -1,1 +1,102 @@
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 16px;
+      background: #f2f2f7;
+    }
+    h2 {
+      font-size: 22px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    button {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      margin: 8px 0;
+      font-size: 18px;
+      border: none;
+      border-radius: 12px;
+      background: #007aff;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #005bb5;
+    }
+    .shop-card {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      margin-bottom: 16px;
+    }
+    .shop-card a {
+      display: block;
+      font-size: 20px;
+      font-weight: bold;
+      color: #007aff;
+      text-decoration: none;
+      margin-bottom: 8px;
+    }
+    .shop-card p {
+      font-size: 16px;
+      color: #444;
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="question"></div>
+  <div id="buttons"></div>
 
+  <script>
+    const questions = [
+      { text: "ご予算はいくらですか？", options: ["¥0~¥500","¥500~¥1000","¥1000~¥1500" ,"¥1500~¥2000" ,"¥2000~¥2500" ,"¥2500~¥3000" ,"¥3000~"], key:"budget" },
+      { text: "場所はどちらですか？", options: ["学内","学外"], key:"place" },
+      { text: "人数は？", options: ["一人向け","少人数向け","大人数向け"], key:"people" },
+      { text: "ジャンルは？", options: ["和食","洋食","中華" ,"フレンチ" ,"イタリアン" ,"あっさり" ,"こってり" ,"肉" ,"魚" ,"野菜" ,"米" ,"麺"], key:"genre" },
+      { text: "テイクアウトは希望しますか？", options: ["Yes","No"], key:"takeout" }
+    ];
+
+    let step = 0;
+    let userData = {};
+
+    function showQuestion() {
+      if(step === questions.length){
+        google.script.run.withSuccessHandler(showResult).getRecommendation(userData);
+        return;
+      }
+
+      const q = questions[step];
+      document.getElementById('question').innerText = q.text;
+      const btnDiv = document.getElementById('buttons');
+      btnDiv.innerHTML = '';
+
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.innerText = opt;
+        btn.onclick = () => {
+          userData[q.key] = opt;
+          step++;
+          showQuestion();
+        };
+        btnDiv.appendChild(btn);
+      });
+    }
+
+    function showResult(result){
+      document.getElementById('question').innerHTML = result;
+      document.getElementById('buttons').innerHTML = '';
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
