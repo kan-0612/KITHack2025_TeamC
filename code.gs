@@ -41,7 +41,7 @@ function getRecommendation(userData) {
   const name = r[0];       // 店名（1列目）
   const url  = r[10];      // URL（11列目）
   const closedDay = r[7];  // 定休日（8列目）
-  const hours = r[8];      // 営業時間（9列目）
+  const hours = r[6];      // 営業時間（7列目）
   
   // 曜日判定
   const closedDays = closedDay ? closedDay.split(/[,、]/).map(d => d.trim()) : [];
@@ -83,9 +83,20 @@ function getRecommendation(userData) {
   }
 }
 
-  const link = url ? `<a href="${url}" target="_blank">${name}</a>` : name;
-  return `${link}<br>${status}`;
+//shop-card
+  return `
+    <div class="shop-card">
+      <a href="${url}" target="_blank">${name}</a>
+      <p>${status}</p>
+      <p>営業時間: ${hours}</p>
+      <p>定休日: ${closedDay}</p>
+    </div>
+  `;
+
 });
 
-return `${formattedDate}(${dayOfWeek}) のおすすめはこちらです🍴<br><br>${shopList.join("<br><br>")}`;
+return `
+  <h2>${formattedDate}(${dayOfWeek}) のおすすめはこちらです🍴</h2>
+  ${shopList.join("")}
+`;
 }
