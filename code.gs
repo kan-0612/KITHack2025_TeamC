@@ -18,17 +18,22 @@ function getRecommendation(userData) {
     const rowData = {};
     headers.forEach((h,i) => rowData[h] = row[i]);
 
+    //予算配列化
+    let budget = rowData.budget ? rowData.budget.toString().split(/[,、]/).map(g => g.trim()) : [];
     // ジャンル配列化
     let genres = rowData.genre ? rowData.genre.toString().split(/[,、]/).map(g => g.trim()) : [];
     // 人数配列化
     let people = rowData.people ? rowData.people.toString().split(/[,、]/).map(p => p.trim()) : [];
+    //テイクアウト配列化
+    let takeout = rowData.takeout ? rowData.takeout.toString().split(/[,、]/).map(p => p.trim()) : [];
+
 
     return (
-      rowData.budget === userData.budget &&
+      budget.includes(userData.budget) &&
       rowData.place === userData.place &&
       people.includes(userData.people) &&
       genres.includes(userData.genre) &&
-      rowData.takeout === userData.takeout
+      takeout.includes(userData.takeout)
     );
   });
 
