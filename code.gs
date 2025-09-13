@@ -101,7 +101,7 @@ function getRecommendation(userData) {
 });
 
 return `
-  <h2>${formattedDate}(${dayOfWeek}) のおすすめはこちらです🍴</h2>
+  <h2>あなたへのおすすめはこちらです🍴</h2>
   ${shopList.join("")}
 `;
 }
